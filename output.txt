@@ -1,0 +1,35 @@
+$ curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123"}'
+{
+  "message": "OTP sent",
+  "loginSessionId": "9d53n"
+}
+
+[Server Log] [OTP] Session 9d53n generated. OTP: 845313
+
+$ curl -c cookies.txt -X POST http://localhost:3000/auth/verify-otp \
+  -H "Content-Type: application/json" \
+  -d '{"loginSessionId":"9d53n","otp":"845313"}'
+{
+  "message": "OTP verified",
+  "sessionId": "9d53n"
+}
+
+$ curl -b cookies.txt -X POST http://localhost:3000/auth/token
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzZXNzaW9uSWQiOiI5ZDUzbiIsImlhdCI6MTc3MDg4NzUwMywiZXhwIjoxNzcwODg4NDAzfQ.hwN_Jglt0l9Oc5eCQ-_XwcIPVSpywr1ZF-F1YAUrsCj9o",
+  "expires_in": 900
+}
+
+$ curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzZXNzaW9uSWQiOiI5ZDUzbiIsImlhdCI6MTc3MDg4NzUwMywiZXhwIjoxNzcwODg4NDAzfQ.hwN_Jglt0l9Oc5eCQ-_XwcIPVSpywr1ZF-F1YAUrsCj9o" http://localhost:3000/protected
+{
+  "message": "Access granted",
+  "user": {
+    "email": "test@example.com",
+    "sessionId": "9d53n",
+    "iat": 1770887503,
+    "exp": 1770888403
+  },
+  "success_flag": "FLAG-dGVzdEBleGFtcGxlLmNvbV9DT01QTEVURURfQVNTSUdOTUVOVA=="
+}
